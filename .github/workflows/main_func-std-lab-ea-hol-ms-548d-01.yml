@@ -16,9 +16,7 @@ env:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    permissions:
-      id-token: write #This is required for requesting the JWT
-
+    
     steps:
       - name: 'Checkout GitHub Action'
         uses: actions/checkout@v4
@@ -35,13 +33,6 @@ jobs:
           dotnet build --configuration Release --output ./output
           popd
       
-      - name: Login to Azure
-        uses: azure/login@v1
-        with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_9D580706ACD744808D8E6B091DE42C1B }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_67AF303BE54941B1A038C39F8D1BDA68 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_ECCDC8587FAA4BD59F312592BEDD8CFA }}
-
       - name: 'Run Azure Functions Action'
         uses: Azure/functions-action@v1
         id: fa
@@ -49,4 +40,4 @@ jobs:
           app-name: 'func-std-lab-ea-hol-ms-548d-01'
           slot-name: 'Production'
           package: '${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output'
-          
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_DE366B872FC4466B8292E8E0696D533E }}
